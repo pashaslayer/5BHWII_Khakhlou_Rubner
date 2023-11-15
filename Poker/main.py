@@ -50,20 +50,15 @@ def check(hand):
 
 def royal_flush(hand, farbe):
     shema = [8, 9, 10, 11, 12]
-    farben = [1, 2, 3, 4]
 
-    # Check if all cards are of the same suit
     if len(set(farbe)) == 1:
-        # Check if the hand contains the cards for a royal flush, regardless of order
         return set(hand) == set(shema)
 
     return False
 
 
 def straight_flush(hand, farbe):
-    # Check if all cards are of the same suit
     if len(set(farbe)) == 1:
-        # Check if the cards form a sequence
         return sorted(hand) == list(range(min(hand), max(hand) + 1))
 
     return False
