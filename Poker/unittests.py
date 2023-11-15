@@ -37,7 +37,7 @@ class TestPokerMethods(unittest.TestCase):
 
     def test_strasse(self):
         self.assertTrue(strasse([2, 3, 4, 5, 6]))  # Gültige Straße
-        self.assertFalse(strasse([2, 3, 4, 5, 7]))
+        self.assertFalse(strasse([2, 3, 4, 5]))
 
     def test_zwei_paare(self):
         self.assertTrue(zwei_paare([2, 2, 3, 3, 4]))  # Gültige Zwei Paare

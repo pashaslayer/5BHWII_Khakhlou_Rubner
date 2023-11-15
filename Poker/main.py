@@ -43,9 +43,9 @@ def play(anzahl):
 
 
 def check(hand):
-    modulo_12_values = [num % 13 for num in hand]
+    modulo_13_values = [num % 13 for num in hand]
     colors = [num // 13 for num in hand]
-    return modulo_12_values, colors
+    return modulo_13_values, colors
 
 
 def royal_flush(hand, farbe):
