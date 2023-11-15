@@ -1,6 +1,4 @@
 import random
-import numpy as np
-from matplotlib import pyplot as plt
 
 # Befüllung eines Kartendecks mit 52 Karten aus 4 verschiedenen Farben
 karten = list(range(0, 52))
@@ -19,112 +17,107 @@ kombinationen = {"royal_flush": 0,
 
 def play(anzahl):
     for i in range(anzahl):
-        stopper = False
-
         hand = random.sample(karten, 5)
-
         main_shema, main_color_shema = check(hand)
-        while not stopper:
-            stopper = royal_flush(main_shema, main_color_shema)
-            stopper = straight_flush(main_shema, main_color_shema)
-            stopper = vierling(main_shema, main_color_shema)
-            stopper = full_house(main_shema)
-            stopper = flush(main_shema, main_color_shema)
-            stopper = strasse(main_shema, main_color_shema)
-            stopper = drilling(main_shema)
-            stopper = zwei_paare()
-            stopper = paar(main_shema)
+
+        if royal_flush(main_shema, main_color_shema):
+            kombinationen["royal_flush"] += 1
+        elif straight_flush(main_shema, main_color_shema):
+            kombinationen["straight_flush"] += 1
+        elif vierling(main_shema):
+            kombinationen["vierling"] += 1
+        elif full_house(main_shema):
+            kombinationen["full_house"] += 1
+        elif flush(main_color_shema):
+            kombinationen["flush"] += 1
+        elif strasse(main_shema):
+            kombinationen["strasse"] += 1
+        elif drilling(main_shema):
+            kombinationen["drilling"] += 1
+        elif zwei_paare(main_shema):
+            kombinationen["zwei_paare"] += 1
+        elif paar(main_shema):
+            kombinationen["paar"] += 1
+        else:
+            kombinationen["high_card"] += 1
 
 
 def check(hand):
-    modulo_12_values = []
-    colors = []
-    for num in hand:
-        modulo_value = num % 12
-        modulo_12_values.append(modulo_value)
-        colors.append(num // 12)
+    modulo_12_values = [num % 13 for num in hand]
+    colors = [num // 13 for num in hand]
     return modulo_12_values, colors
 
 
 def royal_flush(hand, farbe):
     shema = [8, 9, 10, 11, 12]
-    farben = ([1, 1, 1, 1],
-              [2, 2, 2, 2],
-              [3, 3, 3, 3],
-              [4, 4, 4, 4])
+    farben = [1, 2, 3, 4]
 
-    if hand in shema and farbe in farben:
-        kombinationen["royal_flush"] += 1
-        return True
+    # Check if all cards are of the same suit
+    if len(set(farbe)) == 1:
+        # Check if the hand contains the cards for a royal flush, regardless of order
+        return set(hand) == set(shema)
+
+    return False
 
 
 def straight_flush(hand, farbe):
-    farben = ([1, 1, 1, 1],
-              [2, 2, 2, 2],
-              [3, 3, 3, 3],
-              [4, 4, 4, 4])
+    # Check if all cards are of the same suit
+    if len(set(farbe)) == 1:
+        # Check if the cards form a sequence
+        return sorted(hand) == list(range(min(hand), max(hand) + 1))
 
-    sorted = hand.sort()
-
-    if hand == sorted and farbe in farben:
-        kombinationen["straight_flush"] += 1
-        return True
+    return False
 
 
-def vierling(hand, farbe):
-    if hand[0] == hand[1] == hand[2] == hand[4]:
-        if farbe.sort() == [1, 2, 3, 4]:
-            kombinationen["vierling"] += 1
-            return True
+def vierling(hand):
+    return hand[0] == hand[1] == hand[2] == hand[3] or hand[1] == hand[2] == hand[3] == hand[4]
 
 
 def paar(hand):
-    if (x for x in hand if hand.count(x) == 2):
-        kombinationen["paar"] += 1
-        return True
+    for x in hand:
+        if hand.count(x) == 2:
+            return True
+    return False
 
 
 def drilling(hand):
-    if (x for x in hand if hand.count(x) == 3):
-        kombinationen["drilling"] += 1
-        return True
+    for x in hand:
+        if hand.count(x) == 3:
+            return True
+    return False
 
 
-# prio
 def full_house(hand):
-    if (x for x in hand if hand.count(x) == 3):
-        if (x for x in hand if hand.count(x) == 2):
-            kombinationen["full_house"] += 1
-            return True
+    return drilling(hand) and paar(hand)
 
 
-def flush(hand, farbe):
-    farben = ([1, 1, 1, 1],
-              [2, 2, 2, 2],
-              [3, 3, 3, 3],
-              [4, 4, 4, 4])
-    if farbe in farben:
-        if hand != hand.sort():
-            kombinationen["flush"] += 1
-            return True
+def flush(farbe):
+    return len(set(farbe)) == 1
 
 
-def strasse(hand, farbe):
-    farben = ([1, 1, 1, 1],
-              [2, 2, 2, 2],
-              [3, 3, 3, 3],
-              [4, 4, 4, 4])
-    if farbe in farben:
-        if hand == hand.sort():
-            kombinationen["strasse"] += 1
-            return True
+def strasse(hand):
+    return sorted(hand) == hand and len(set(hand)) == 5
 
 
-def zwei_paare():
-    kombinationen["zwei_paare"] += 1
-    return True
+def zwei_paare(hand):
+    count_pairs = 0
+    for x in set(hand):
+        if hand.count(x) == 2:
+            count_pairs += 1
+    return count_pairs == 2
+
+
+def calculate_percentage(combination_count, total):
+    percentages = {key: value / total * 100 for key, value in combination_count.items()}
+    return percentages
 
 
 if __name__ == '__main__':
-    play(10000)
+    total_games = 10000000
+    play(total_games)
     print(kombinationen)
+    percentages = calculate_percentage(kombinationen, total_games)
+
+    # Ausdrucken der prozentualen Anteile
+    for key, value in percentages.items():
+        print(f"{key}: {value}%")
