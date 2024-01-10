@@ -1,4 +1,5 @@
 import random
+import sys
 
 # Befüllung eines Kartendecks mit 52 Karten aus 4 verschiedenen Farben
 karten = list(range(0, 52))
@@ -108,8 +109,10 @@ def calculate_percentage(combination_count, total):
 
 
 if __name__ == '__main__':
-    total_games = 10000000
+    # total_games = 1000000
+    total_games = int(sys.argv[1])
     play(total_games)
+
     print(kombinationen)
     percentages = calculate_percentage(kombinationen, total_games)
 

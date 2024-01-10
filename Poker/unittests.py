@@ -17,6 +17,7 @@ class TestPokerMethods(unittest.TestCase):
 
     def test_vierling(self):
         self.assertTrue(vierling([2, 2, 2, 2, 3]))
+        self.assertTrue(vierling([2, 2, 3, 2, 2]))
         self.assertFalse(vierling([2, 3, 4, 5, 6]))
 
     def test_paar(self):
