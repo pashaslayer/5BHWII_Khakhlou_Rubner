@@ -1,0 +1,14 @@
+[
+  {
+    "nickname": "Pablo",
+    "wins": 2,
+    "loses": 2,
+    "ties": 4
+  },
+  {
+    "nickname": "Babeldir",
+    "wins": 0,
+    "loses": 0,
+    "ties": 2
+  }
+]
