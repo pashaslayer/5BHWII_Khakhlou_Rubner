@@ -1,5 +1,7 @@
 import json
 import random
+import time
+import requests
 from enum import Enum
 from Player import Player
 
@@ -12,6 +14,19 @@ class Mode(Enum):
 
 
 users = []
+
+
+# Time decorator
+def timeit(method):
+    def timed(*args, **kw):
+        start_time = time.time()
+        result = method(*args, **kw)
+        end_time = time.time()
+
+        print(f"{method.__name__} took {end_time - start_time:.3f} seconds to execute")
+        return result
+
+    return timed
 
 
 # Vergleich der Regeln
@@ -31,6 +46,7 @@ def get_winner(choice1, choice2):
         return 0
 
 
+@timeit
 def player_choice(player_number):
     choices = ["Rock", "Paper", "Scissors", "Spock", "Lizard"]
     print(f"Player {player_number}, enter your choice:")
@@ -68,6 +84,7 @@ def saveUsersToFile():
         json.dump(users, file, indent=2)
 
 
+@timeit
 def play_game():
     print("Welcome to Rock-Paper-Scissors-Spock-Lizard Game!")
     choice = int(input("Do you want to play [3] or see the statistics [4]:\n"))
@@ -81,6 +98,7 @@ def play_game():
             if mode == Mode.COMP.value:
                 while True:
                     player1_choice = player_choice(1)
+                    update_stats(player_one, player1_choice)
                     computer = computer_choice()
                     print(f"Computer chose: {computer}")
                     winner = get_winner(player1_choice, computer)
@@ -100,7 +118,9 @@ def play_game():
                 player_two.nickname = input("[PLAYER 2] Enter your nickname: \n")
                 while True:
                     player1_choice = player_choice(1)
+                    update_stats(player_one, player1_choice)
                     player2_choice = player_choice(2)
+                    update_stats(player_two, player2_choice)
                     winner = get_winner(player1_choice, player2_choice)
                     if winner == 1:
                         player_one.wins += 1
@@ -121,11 +141,13 @@ def play_game():
             user_input = input("Do you want to change the game mode? (yes/no): \n")
             if user_input.lower() != "yes":
                 saveUserToUsers(player_one)
+                insert_new_entry(player_one)
                 if player_two.nickname != "":
                     saveUserToUsers(player_two)
+                    insert_new_entry(player_two)
                 break
     elif choice == Mode.STATS.value:
-        print("Statistics:")
+        print("JSON: Statistics:")
         sorted_users = sorted(users, key=lambda x: x['wins'], reverse=True)
 
         for user in sorted_users:
@@ -135,10 +157,54 @@ def play_game():
             print(f"Ties: {user['ties']}")
             print("-" * 20)
 
+        print()
+        print("DATABASE: Statistics")
+        get_entries()
+
+
+# Zusatz
+def update_stats(player, choice):
+    if choice == "Scissors":
+        player.scissors += 1
+    elif choice == "Rock":
+        player.rock += 1
+    elif choice == "Paper":
+        player.paper += 1
+    elif choice == "Spock":
+        player.spock += 1
+    elif choice == "Lizard":
+        player.lizard += 1
+
+
+def insert_new_entry(player):
+    url = "http://127.0.0.1:5000/saveStat"
+    query = {
+        'nickname': player.nickname,
+        'rock': player.rock,
+        'paper': player.paper,
+        'scissors': player.scissors,
+        'spock': player.spock,
+        'lizard': player.lizard
+    }
+    res = requests.post(url, json=query)
+    print(res.text)
+
+
+def get_entries():
+    url = "http://127.0.0.1:5000/getStats"
+    res = requests.get(url)
+    data = res.json()
+
+    if 'stats' in data:
+        for row in data['stats']:
+            print(row)
+    else:
+        print("No statistics available")
+
 
 if __name__ == '__main__':
-    player_one = Player("", 0, 0, 0)
-    player_two = Player("", 0, 0, 0)
+    player_one = Player("", 0, 0, 0, 0, 0, 0, 0, 0)
+    player_two = Player("", 0, 0, 0, 0, 0, 0, 0, 0)
     users = loadUsersToStats()
 
     play_game()

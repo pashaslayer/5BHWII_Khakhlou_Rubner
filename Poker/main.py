@@ -1,5 +1,6 @@
 import random
 import sys
+import time
 
 # Befüllung eines Kartendecks mit 52 Karten aus 4 verschiedenen Farben
 karten = list(range(0, 52))
@@ -14,6 +15,19 @@ kombinationen = {"royal_flush": 0,
                  "zwei_paare": 0,
                  "paar": 0,
                  "high_card": 0}
+
+
+# Time decorator
+def timeit(method):
+    def timed(*args, **kw):
+        start_time = time.time()
+        result = method(*args, **kw)
+        end_time = time.time()
+
+        print(f"{method.__name__} took {end_time - start_time:.3f} seconds to execute")
+        return result
+
+    return timed
 
 
 def play(anzahl):

@@ -3,12 +3,57 @@
     "nickname": "Pablo",
     "wins": 2,
     "loses": 2,
-    "ties": 4
+    "ties": 5
   },
   {
     "nickname": "Babeldir",
     "wins": 0,
-    "loses": 0,
+    "loses": 2,
+    "ties": 4
+  },
+  {
+    "nickname": "Ege",
+    "wins": 5,
+    "loses": 2,
+    "ties": 7
+  },
+  {
+    "nickname": "Ian",
+    "wins": 1,
+    "loses": 1,
     "ties": 2
+  },
+  {
+    "nickname": "Pavel",
+    "wins": 0,
+    "loses": 1,
+    "ties": 0,
+    "rock": 0,
+    "paper": 1,
+    "scissors": 0,
+    "spock": 0,
+    "lizard": 0
+  },
+  {
+    "nickname": "Paul",
+    "wins": 1,
+    "loses": 0,
+    "ties": 0,
+    "rock": 0,
+    "paper": 0,
+    "scissors": 1,
+    "spock": 0,
+    "lizard": 0
+  },
+  {
+    "nickname": "skdfl",
+    "wins": 0,
+    "loses": 0,
+    "ties": 1,
+    "rock": 0,
+    "paper": 0,
+    "scissors": 0,
+    "spock": 1,
+    "lizard": 0
   }
 ]
